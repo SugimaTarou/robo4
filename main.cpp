@@ -1,4 +1,4 @@
-#include"../program/packet.h"
+#include"packet.h"
 
 int main(void) {
 	//unsigned char txdate[9];
