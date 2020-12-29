@@ -36,38 +36,53 @@ packet::packet(int pin_number) {
         conf_tio.c_cc[VTIME]=0;
         //store configuration
         tcsetattr(fd,TCSANOW,&conf_tio);
+
+	        //pinMode(pin_number,OUTPUT);
+        if(fd<0)printf("can not open serialport\n");
+        else	printf("serialport opened\n");
 }
 
 ////////////////////////////////////	Config Receive-Send Serial	////////////////////////////////////
 short int packet::send_packet(int array_element_count, unsigned char txdate[]){
-	//for(int i=0; i<=( array_element_count - 1); i++){
-		write(fd,txdate, array_element_count);
-		//write(fd, &txdate[i],1);
+	for(int i=0; i<=( array_element_count - 1); i++){
+		//write(fd,txdate, array_element_count);
+		write(fd, &txdate[i],1);
 
 		//serialPutchar( fd,txdate[i] );
-		//printf("\nsend: %d\n" , txdate[3] );
-		sleep(1);
+		printf("send: %d\n" , txdate[i] );
+		//sleep(1);
 		//delay(1000);
-        //}
-	printf("send finish");
+        }
+	printf("\n\n send finish");
 	return 0;
 }
 
 short int packet::receive_packet() {
-	//char buf[100]={100};
+	int re_sum=0;
 	rd= read(fd,buf,sizeof(buf));
-	//printf("\n\nDate count: %d \n", rd );
-	if( rd >0 ){
-	printf("\n\nDate count: %d \n", rd );
-		for( int i=0; i<rd; i++ ){
-			printf("receive: [%d] : %d \n" , i, buf[i] );
+
+	//if( rd==26 ){
+	printf("\n\nDate count: %d \n", rd-9 );
+		for( int i=8; i<rd; i++ ){
+			receive_date[i-8]=buf[i];
+			printf("receive: [%d] : %d \n" , i-8, receive_date[i-8] );
 			//fflush(stdout);
                 }
-	
-	//printf("receive: %d \n" ,buf);
-        }
+	//}
 
-
+	check_sum(receive_date,25);
+	printf("ck_sum  : %d\n",ck_sum);
+	printf("buf[rd-1]  : %d\n",buf[rd-1]);
+	if( ck_sum ==buf[rd-1] ){
+		("\nGET DATE TRUE");
+	}
+	else{
+		printf("\n\n\n==========   GET DATE FALSE   ==========\n\n\n");
+		for(int i=0; i<25; i++){
+			receive_date[i]=0;
+		}
+	}
+	ck_sum=0;
 	//close(fd);
 
 	/*
@@ -89,8 +104,8 @@ short int packet::receive_packet() {
 
 
 ////////////////////////////////////	Make-Send Serial Short Packet	////////////////////////////////////
-short int packet::check_sum(unsigned char txdate[], int sum_place) {
-	for (int i = 2; i < sum_place; i++) {
+short int packet::check_sum(unsigned char txdate[], int sum_array_place) {
+	for (int i = 2; i < sum_array_place; i++) {
 		ck_sum = ck_sum ^ txdate[i];
 	}
 	//txdate[8]=ck_sum;

@@ -23,17 +23,18 @@ int main(void) {
 	unsigned char torque_on  = 0x01;
 	packet packet2(1);//Pin_number
 	//packet2.torque_on_off(1,torque_on);
-	packet2.get_place(1);
 	//packet2.set_place(1);
-	sleep(1);
+	//packet2.get_place(1);
+	//sleep(1);
 
-
-	//while(1){
-		//printf("\n Get Place START \n\n");
+	while(1){
+		packet2.get_place(1);
+		sleep(1);
+		printf("\n Get Place START \n\n");
 		packet2.receive_packet();
-		//printf("\n Get Place END \n\n");
-		//delay(1000);
-	//}
+		printf("\n Get Place END \n\n");
+		sleep(1);
+	}
 	close(packet2.fd);
 	return 0;
 }
