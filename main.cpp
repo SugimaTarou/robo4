@@ -22,20 +22,21 @@ int main(void) {
 	unsigned char torque_off = 0x00;
 	unsigned char torque_on  = 0x01;
 	packet packet2(1);//Pin_number
-	//packet2.torque_on_off(1,torque_on);
-	//packet2.set_place(1);
-	//packet2.get_place(1);
-	//sleep(1);
+	packet2.torque_on_off(1,torque_on);
+	//packet2.receive_packet();
+	packet2.set_place(1);
+	sleep(1);
 
 	while(1){
-		packet2.get_place(1);
-		sleep(1);
-		printf("\n Get Place START \n\n");
+		packet2.get_date(1);
+		usleep(600000);
+		//printf("\n\n Get Place START \n\n");
 		packet2.receive_packet();
-		printf("\n Get Place END \n\n");
-		sleep(1);
+		//printf("\n\n Get Place END \n\n");
+		usleep(600000);
+		//char A = packet2.receive_date;
+		//packet2.conversion_date(A);
 	}
-	close(packet2.fd);
+	//close(packet2.fd);
 	return 0;
 }
-
